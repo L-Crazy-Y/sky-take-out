@@ -28,7 +28,7 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * 处理sql异常
+     * 处理sql异常 2024/09/20
      * @param ex
      * @return
      */
