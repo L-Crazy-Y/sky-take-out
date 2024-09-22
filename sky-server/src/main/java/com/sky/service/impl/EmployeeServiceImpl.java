@@ -16,15 +16,10 @@ import com.sky.exception.PasswordErrorException;
 import com.sky.mapper.EmployeeMapper;
 import com.sky.result.PageResult;
 import com.sky.service.EmployeeService;
-import com.sky.utils.JwtUtil;
-import io.jsonwebtoken.Claims;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
-
-import javax.servlet.http.HttpServletRequest;
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -74,7 +69,20 @@ public class EmployeeServiceImpl implements EmployeeService {
      * 新增员工 2024/09/20
      * @param employeeDTO
      */
+    @Override
+    public void save(EmployeeDTO employeeDTO) {
+        System.out.println("当前线程id: "+ Thread.currentThread().getId());
+        Employee employee = new Employee();
+        BeanUtils.copyProperties(employeeDTO,employee);
+        employee.setPassword(DigestUtils.md5DigestAsHex(PasswordConstant.DEFAULT_PASSWORD.getBytes()));
+        employee.setStatus(StatusConstant.ENABLE);
+        employee.setCreateTime(LocalDateTime.now());
+        employee.setUpdateTime(LocalDateTime.now());
+        employee.setCreateUser(BaseContext.getCurrentId());
+        employee.setUpdateUser(BaseContext.getCurrentId());
 
+        employeeMapper.insert(employee);
+    }
 
     /**
      * 分页查询
@@ -93,21 +101,6 @@ public class EmployeeServiceImpl implements EmployeeService {
         return new PageResult(total,records);
     }
 
-    @Override
-    public void save(EmployeeDTO employeeDTO) {
-        System.out.println("当前线程id: "+ Thread.currentThread().getId());
-        Employee employee = new Employee();
-        BeanUtils.copyProperties(employeeDTO,employee);
-        employee.setPassword(DigestUtils.md5DigestAsHex(PasswordConstant.DEFAULT_PASSWORD.getBytes()));
-        employee.setStatus(StatusConstant.ENABLE);
-        employee.setCreateTime(LocalDateTime.now());
-        employee.setUpdateTime(LocalDateTime.now());
-        employee.setCreateUser(BaseContext.getCurrentId());
-        employee.setUpdateUser(BaseContext.getCurrentId());
-
-        employeeMapper.insert(employee);
-    }
-
     /**
      * 启用禁用员工账号
      * @param status
@@ -124,6 +117,33 @@ public class EmployeeServiceImpl implements EmployeeService {
                 .id(id)
                 .build();
         employeeMapper.update(employee);
+    }
+
+    /**
+     * 根据id查询员工
+     * @param id
+     * @return
+     */
+    @Override
+    public Employee getById(Long id) {
+        Employee employee = employeeMapper.getById(id);
+        //处理密码
+        employee.setPassword("****");
+        return employee;
+    }
+
+    /**
+     * 编辑员工信息 2024/09/22
+     * @param employeeDTO
+     */
+    @Override
+    public void update(EmployeeDTO employeeDTO) {
+    Employee employee = new Employee();
+    BeanUtils.copyProperties(employeeDTO,employee);
+    employee.setUpdateTime(LocalDateTime.now());
+    employee.setUpdateUser(BaseContext.getCurrentId());
+
+    employeeMapper.update(employee);
     }
 
 }
