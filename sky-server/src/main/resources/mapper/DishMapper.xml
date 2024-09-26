@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sky.mapper.DishMapper">
+
+<!--因为dish_id是自增的，插入数据后，需要回显，把值赋给id属性，
+因为flavor表插入数据的时候需要用到dish_id-->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+       insert into dish (name, category_id, price, image, description, create_time, update_time, create_user, update_user,status)
+        values
+        (#{name},#{categoryId},#{price},#{image},#{description},#{createTime},#{updateTime},#{createUser},#{updateUser},#{status})
+    </insert>
+</mapper>
