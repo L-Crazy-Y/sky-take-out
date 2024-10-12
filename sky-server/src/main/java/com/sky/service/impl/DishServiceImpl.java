@@ -1,5 +1,4 @@
 package com.sky.service.impl;
-
 import com.github.pagehelper.Constant;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
@@ -49,9 +48,13 @@ public class DishServiceImpl implements DishService {
         BeanUtils.copyProperties(dishDTO,dish);
         //向菜品表插入1条数据
         dishMapper.insert(dish);
+
+        //获取insert语句生成的主键值
         Long dishId = dish.getId();
 
+        //判断前端是否传过来了口味数据
         List<DishFlavor> flavors = dishDTO.getFlavors();
+        // 如果传过来了，那就正常插入数据到数据库
         if (flavors !=null && flavors.size() > 0){
             //向口味表插入n条数据
             flavors.forEach(dishFlavor -> {
@@ -70,6 +73,8 @@ public class DishServiceImpl implements DishService {
     @Override
     public PageResult pageQuery(DishPageQueryDTO dishPageQueryDTO) {
         PageHelper.startPage(dishPageQueryDTO.getPage(),dishPageQueryDTO.getPageSize());
+
+        //将查询到的所有数据封装成page对象
         Page<DishVO> page = dishMapper.pageQuery(dishPageQueryDTO);
 
         return new PageResult(page.getTotal(),page.getResult());
@@ -116,6 +121,7 @@ public class DishServiceImpl implements DishService {
 
     /**
      * 根据id查询菜品和对应的口味数据 2024/09/28
+     * 用于修改操作时候的数据回显
      * @param id
      * @return
      */
