@@ -23,6 +23,17 @@
         order by d.create_time desc
     </select>
 
+    <select id="list" resultType="com.sky.entity.Dish" parameterType="Dish">
+        select * from dish
+        <where>
+            <if test="name != null">and name like concat('%',#{name},'%')</if>
+            <if test="categoryId != null">and category_id = #{categoryId}</if>
+            <if test="status != null">and status = #{status}</if>
+        </where>
+        order by create_time desc
+    </select>
+
+
     <delete id="deleteByIds">
         delete from dish where id in
         <foreach collection="ids" open="(" close=")" separator="," item="id">
@@ -33,9 +44,6 @@
     <update id="update">
         update  dish
         <set>
-           <if test="name !=null">
-               name = #{name},
-           </if>
             <if test="name !=null">
                 name = #{name},
             </if>
@@ -51,13 +59,17 @@
             <if test="description !=null">
                 description = #{description},
             </if>
-            <if test="updateTime !=null">
+            <if test="status != null">
+                status = #{status},
+            </if>
+            <if test="updateTime != null">
                 update_time = #{updateTime},
             </if>
-            <if test="updateUser !=null">
-                update_user = #{updateUser},
+            <if test="updateUser != null">
+                update_user = #{updateUser}
             </if>
         </set>
         where id = #{id}
     </update>
+
 </mapper>

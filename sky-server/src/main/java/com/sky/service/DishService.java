@@ -2,6 +2,7 @@ package com.sky.service;
 
 import com.sky.dto.DishDTO;
 import com.sky.dto.DishPageQueryDTO;
+import com.sky.entity.Dish;
 import com.sky.result.PageResult;
 import com.sky.vo.DishVO;
 
@@ -40,4 +41,25 @@ public interface DishService {
      * @param dishDTO
      */
     void updateWithFlavor(DishDTO dishDTO);
+
+    /**
+     *
+     * @param dish
+     * @return
+     */
+    List<DishVO> listWithFlavor(Dish dish);
+
+    /**
+     * 根据菜品分类id查询菜品
+     * @param categoryId
+     * @return
+     */
+    List<Dish> list(Long categoryId);
+
+    /**
+     * 菜品启售，禁售 2024/10/18
+     * @param status
+     * @param id
+     */
+    void StartOrStop(Integer status, Long id);
 }

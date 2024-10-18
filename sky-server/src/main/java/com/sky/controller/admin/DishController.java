@@ -2,6 +2,7 @@ package com.sky.controller.admin;
 
 import com.sky.dto.DishDTO;
 import com.sky.dto.DishPageQueryDTO;
+import com.sky.entity.Dish;
 import com.sky.result.PageResult;
 import com.sky.result.Result;
 import com.sky.service.DishService;
@@ -90,6 +91,34 @@ public class DishController {
     public Result update(@RequestBody DishDTO dishDTO){
         log.info("修改菜品：{}",dishDTO);
         dishService.updateWithFlavor(dishDTO);
+        return Result.success();
+    }
+
+    /**
+     * 根据菜品分类id查询菜品 2024/10/17
+     * @param categoryId
+     * @return
+     */
+    @GetMapping("/list")
+    // 这里方法的形参叫查询参数即在地址栏url后拼接？id = ... 对应javaWeb中的简单参数
+    // 而路径参数是地址栏url后拼接/{参数},这与javaWeb中的路径参数相对应，二者还是有区别的。
+    public Result<List<Dish>>list (Long categoryId){
+        log.info("根据菜品分类id查询菜品:{}",categoryId);
+        List<Dish> list = dishService.list(categoryId);
+        return Result.success(list);
+    }
+
+    /**
+     * 菜品启售，禁售 2024/10/18
+     * @param status
+     * @param id
+     * @return
+     */
+    @PostMapping("/status/{status}")
+    @ApiOperation("菜品启售，禁售")
+    public Result<String> StartOrStop(@PathVariable Integer status,Long id){
+        log.info("菜品启售，禁售:{}",status,id);
+        dishService.StartOrStop(status,id);
         return Result.success();
     }
 }
