@@ -9,6 +9,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,14 +28,15 @@ public class SetmealController {
 
     /**
      * 根据分类id查询套餐 2024/10/19
-     * @param id
+     * @param categoryId
      * @return
      */
     @GetMapping("/list")
     @ApiOperation("根据分类id查询套餐")
-    public Result<List<Setmeal>> list(Long id){
+    @Cacheable(cacheNames = "setmealCache",key = "#categoryId") //key:setmealCache::100
+    public Result<List<Setmeal>> list(Long categoryId){
         Setmeal setmeal = new Setmeal();
-        setmeal.setCategoryId(id);
+        setmeal.setCategoryId(categoryId);
         setmeal.setStatus(StatusConstant.ENABLE);
 
         log.info("根据分类id查询套餐");

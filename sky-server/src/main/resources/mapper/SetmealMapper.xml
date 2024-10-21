@@ -81,10 +81,10 @@
         select * from setmeal
         <where>
             <if test="name != null">
-                and name like concat('%',#{name},'%'),
+                and name like concat('%',#{name},'%')
             </if>
             <if test="categoryId != null">
-               and category_id = #{categoryId},
+               and category_id = #{categoryId}
             </if>
             <if test="status != null">
                and status = #{status}
