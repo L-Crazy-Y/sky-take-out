@@ -40,4 +40,11 @@ public interface ShoppingCartMapper {
      */
     @Delete("delete from shopping_cart where user_id = #{userId}")
     void delete(Long userId);
+
+    /**
+     * 当前商品在购物车中只有一份，直接删除当前记录
+     * @param id
+     */
+    @Delete("delete from shopping_cart where id = #{id}")
+    void deleteById(Long id);
 }
