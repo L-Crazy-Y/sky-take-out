@@ -16,8 +16,8 @@ sky:
     port: 6379
     database: 9
   wechat:
-    appid: wxc36164197b44c94e
-    secret:
+    #appid: wxc36164197b44c94e
+    #secret:
     mchid:
     mchSerialNo:
     privateKeyFilePath:
