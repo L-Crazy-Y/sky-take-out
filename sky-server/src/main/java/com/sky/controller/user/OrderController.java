@@ -98,6 +98,16 @@ public class OrderController {
     @PostMapping("/repetition/{id}")
     public Result oneMore(@PathVariable Long id){
         orderService.oneMore(id);
+        return Result.success();
+    }
+
+    /**
+     * 客户催单
+     * @param id
+     * @return
+     */
+    public Result reminder(@PathVariable Long id){
+        orderService.reminder(id);
 
         return Result.success();
     }
