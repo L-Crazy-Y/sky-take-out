@@ -1,5 +1,7 @@
 package com.sky.service.impl;
 
+import com.sky.dto.LocalDateTime2TurpleDTO;
+import com.sky.dto.OrderAmount;
 import com.sky.entity.Orders;
 import com.sky.mapper.OrderMapper;
 import com.sky.service.ReportService;
@@ -40,7 +42,21 @@ public class ReportServiceImpl implements ReportService {
             begin = begin.plusDays(1);
             dateList.add(begin);
         }
-        //存放每天的营业额
+
+        //视频中的方法，网络io资源消耗大,以下是优化
+        List<LocalDateTime2TurpleDTO> localDateTimes = localDate2LocalDateTime(dateList);
+
+        List<OrderAmount> orderAmountList = orderMapper.countSumByDay(localDateTimes);
+        List<Double> turnoverList = new ArrayList<>();
+        for (OrderAmount orderAmount : orderAmountList) {
+            if (orderAmount == null){
+                turnoverList.add(0.0);
+            }else {
+                turnoverList.add(orderAmount.getSum());
+            }
+        }
+
+        /*//存放每天的营业额
         List<Double> turnoverList = new ArrayList<>();
 
         for (LocalDate date : dateList) {
@@ -57,8 +73,7 @@ public class ReportServiceImpl implements ReportService {
             Double turnover =  orderMapper.sumByMap(map);
             turnover = turnover == null ? 0.0 : turnover;
             turnoverList.add(turnover);
-
-        }
+        }*/
 
         //将集合中的元素取出来用逗号分割，最终拼接成一个字符串。
     return TurnoverReportVO.builder()
@@ -66,4 +81,24 @@ public class ReportServiceImpl implements ReportService {
             .turnoverList(StringUtils.join(turnoverList,","))
             .build();
     }
+
+
+
+    /**
+     * 将LocalDate转化为LocalDateTime方便数据库查询
+     *
+     * @param dateList
+     * @return
+     */
+    public List<LocalDateTime2TurpleDTO> localDate2LocalDateTime(List<LocalDate> dateList) {
+        List<LocalDateTime2TurpleDTO> localDateTimes = new ArrayList<>();
+        for (LocalDate date : dateList) {
+            localDateTimes.add(LocalDateTime2TurpleDTO.builder()
+                    .begin(LocalDateTime.of(date, LocalTime.MIN))
+                    .end(LocalDateTime.of(date, LocalTime.MAX))
+                    .build());
+        }
+        return localDateTimes;
+    }
+
 }

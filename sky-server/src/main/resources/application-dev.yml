@@ -17,7 +17,7 @@ sky:
     database: 9
   wechat:
     #appid: wxc36164197b44c94e
-    #secret:
+    secret:
     mchid:
     mchSerialNo:
     privateKeyFilePath:

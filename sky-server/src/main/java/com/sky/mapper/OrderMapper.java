@@ -1,6 +1,8 @@
 package com.sky.mapper;
 
 import com.github.pagehelper.Page;
+import com.sky.dto.LocalDateTime2TurpleDTO;
+import com.sky.dto.OrderAmount;
 import com.sky.dto.OrdersPageQueryDTO;
 import com.sky.entity.Orders;
 import org.apache.ibatis.annotations.Mapper;
@@ -71,4 +73,11 @@ public interface OrderMapper {
      * @return
      */
     Double sumByMap(Map map);
+
+    /**
+     * 优化
+     * @param dateList
+     * @return
+     */
+    List<OrderAmount> countSumByDay(List<LocalDateTime2TurpleDTO> dateList);
 }

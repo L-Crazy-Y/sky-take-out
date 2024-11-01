@@ -82,8 +82,13 @@
                 and order_time &lt;= #{end}
             </if>
         </where>
+    </select>
 
 
+    <select id="countSumByDay" resultType="com.sky.dto.OrderAmount">
+        <foreach collection="dateList" item="date" separator="union all">
+            select sum(amount) as sum from orders where order_time &gt; #{date.begin} and order_time &lt; #{date.end} and status = 5
+        </foreach>
     </select>
 
 
