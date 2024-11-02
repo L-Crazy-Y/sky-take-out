@@ -6,4 +6,32 @@
         insert into user(openid, name, phone, sex, id_number, avatar, create_time)
         values (#{openid},#{name},#{phone},#{sex},#{idNumber},#{avatar},#{createTime})
     </insert>
+
+
+    <select id="countByMap" resultType="java.lang.Integer">
+        select count(id) from user
+        <where>
+            <if test="begin !=null">
+                and create_time &gt; #{begin}
+            </if>
+            <if test="end !=null">
+                and create_time &lt; #{end}
+            </if>
+        </where>
+
+    </select>
+
+    <select id="countUserByDay" resultType="java.lang.Integer">
+        <foreach collection="localDateTimes" item="date" separator="union all">
+            select count(id) from user
+            where create_time &gt; #{date.begin} and create_time &lt; #{date.end}
+        </foreach>
+    </select>
+
+    <select id="sumByDay" resultType="java.lang.Integer">
+        <foreach collection="localDateTimes" item="date" separator="union all">
+            select count(id) from user
+            where create_time &lt; #{date.end}
+        </foreach>
+    </select>
 </mapper>
