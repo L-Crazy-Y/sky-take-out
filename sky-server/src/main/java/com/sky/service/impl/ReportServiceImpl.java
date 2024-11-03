@@ -1,10 +1,13 @@
 package com.sky.service.impl;
-
+import com.sky.dto.GoodsSalesDTO;
 import com.sky.dto.LocalDateTime2TurpleDTO;
 import com.sky.dto.OrderAmount;
+import com.sky.entity.Orders;
 import com.sky.mapper.OrderMapper;
 import com.sky.mapper.UserMapper;
 import com.sky.service.ReportService;
+import com.sky.vo.OrderReportVO;
+import com.sky.vo.SalesTop10ReportVO;
 import com.sky.vo.TurnoverReportVO;
 import com.sky.vo.UserReportVO;
 import io.swagger.models.auth.In;
@@ -130,6 +133,91 @@ public class ReportServiceImpl implements ReportService {
                 .build();
     }
 
+    /**
+     * 统计指定时间内的订单数据
+     * @param begin
+     * @param end
+     * @return
+     */
+    @Override
+    public OrderReportVO getordersStatistics(LocalDate begin, LocalDate end) {
+        List<LocalDate> dateList = getDateList(begin,end);
+        //拿到处理后的日期列表数据
+        List<LocalDateTime2TurpleDTO>localDateTimes = localDate2LocalDateTime(dateList);
+
+        List<Integer> orderCountList = orderMapper.countOrderNumByDay(localDateTimes);
+        List<Integer> validOrderCountList = orderMapper.sumValidNumByDay(localDateTimes);
+
+       /* for (LocalDateTime2TurpleDTO localDateTime : localDateTimes) {
+            //查询每天的订单总数 select count(id) from orders where order_time > ? and order_time < ?
+            Integer orderCount = getOrderCount(localDateTime.getBegin(),localDateTime.getEnd(),null);
+
+            //查询每天的有效订单数select count(id) from orders where order_time > ? and order_time < ?
+            //and status = 5
+            Integer validOrderCount = getOrderCount(localDateTime.getBegin(),localDateTime.getEnd(), Orders.COMPLETED);
+
+            orderCountList.add(orderCount);
+            validOrderCountList.add(validOrderCount);
+        }*/
+
+        //计算时间区间内的订单总数量
+        Integer totalOrderCount = orderCountList.stream().reduce(Integer::sum).get();
+        //计算时间区间内的有效订单总数量
+        Integer validOrderCount = validOrderCountList.stream().reduce(Integer::sum).get();
+
+
+        Double orderCompletionRate = 0.0;
+        if (totalOrderCount != 0) {
+            //计算订单完成率
+            orderCompletionRate = validOrderCount.doubleValue() / totalOrderCount;
+
+        }
+        return OrderReportVO.builder()
+                .dateList(StringUtils.join(dateList,","))
+                .orderCountList(StringUtils.join(orderCountList,","))
+                .validOrderCountList(StringUtils.join(validOrderCountList,","))
+                .totalOrderCount(totalOrderCount)
+                .validOrderCount(validOrderCount)
+                .orderCompletionRate(orderCompletionRate)
+                .build();
+    }
+
+    /**
+     * 统计指定时间区间内的销量排名前10
+     * @param begin
+     * @param end
+     * @return
+     */
+    @Override
+    public SalesTop10ReportVO getSalesTop10(LocalDate begin, LocalDate end) {
+        LocalDateTime beginTime = LocalDateTime.of(begin,LocalTime.MIN);
+        LocalDateTime endTime = LocalDateTime.of(end,LocalTime.MAX);
+
+        List<GoodsSalesDTO> salesTop10 = orderMapper.getSalesTop10(beginTime,endTime);
+        List<String> nameList = new ArrayList<>();
+        List<Integer> numberList = new ArrayList<>();
+
+        for (GoodsSalesDTO goodsSalesDTO : salesTop10) {
+            nameList.add(goodsSalesDTO.getName());
+            numberList.add(goodsSalesDTO.getNumber());
+        }
+
+        return SalesTop10ReportVO.builder()
+                .nameList(StringUtils.join(nameList,","))
+                .numberList(StringUtils.join(numberList,","))
+                .build();
+    }
+
+
+
+   /* private Integer getOrderCount(LocalDateTime begin,LocalDateTime end,Integer status){
+        Map map = new HashMap();
+        map.put("begin",begin);
+        map.put("end",end);
+        map.put("status",status);
+        return orderMapper.countByMap(map);
+    }*/
+
     public List<LocalDate>getDateList(LocalDate begin,LocalDate end){
         List<LocalDate>dateList = new ArrayList<>();
         dateList.add(begin);
@@ -140,7 +228,6 @@ public class ReportServiceImpl implements ReportService {
         }
         return dateList;
     }
-
     /**
      * 将LocalDate转化为LocalDateTime方便数据库查询
      *
@@ -157,5 +244,6 @@ public class ReportServiceImpl implements ReportService {
         }
         return localDateTimes;
     }
+
 
 }

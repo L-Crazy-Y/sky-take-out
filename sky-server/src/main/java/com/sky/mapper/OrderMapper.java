@@ -1,6 +1,7 @@
 package com.sky.mapper;
 
 import com.github.pagehelper.Page;
+import com.sky.dto.GoodsSalesDTO;
 import com.sky.dto.LocalDateTime2TurpleDTO;
 import com.sky.dto.OrderAmount;
 import com.sky.dto.OrdersPageQueryDTO;
@@ -80,4 +81,33 @@ public interface OrderMapper {
      * @return
      */
     List<OrderAmount> countSumByDay(List<LocalDateTime2TurpleDTO> dateList);
+
+    /**
+     * 根据动态条件统计订单数量
+     * @param map
+     * @return
+     */
+    Integer countByMap(Map map);
+
+    /**
+     * 统计指定时间区间内的销量排名前10
+     * @param begin
+     * @param end
+     * @return
+     */
+    List<GoodsSalesDTO> getSalesTop10(LocalDateTime begin,LocalDateTime end);
+
+    /**
+     * 优化
+     * @param localDateTimes
+     * @return
+     */
+    List<Integer> countOrderNumByDay(List<LocalDateTime2TurpleDTO> localDateTimes);
+
+    /**
+     * 优化
+     * @param localDateTimes
+     * @return
+     */
+    List<Integer> sumValidNumByDay(List<LocalDateTime2TurpleDTO> localDateTimes);
 }
