@@ -34,7 +34,7 @@ public class WorkSpaceServiceImpl implements WorkSpaceService {
     private SetmealMapper setmealMapper;
 
     @Override
-    public BusinessDataVO getBusibess() {
+    public BusinessDataVO getBusibess(LocalDateTime begin,LocalDateTime end) {
         /**
          * 营业额：当日已完成订单的总金额
          * 有效订单：当日已完成订单的数量
@@ -42,10 +42,7 @@ public class WorkSpaceServiceImpl implements WorkSpaceService {
          * 平均客单价：营业额 / 有效订单数
          * 新增用户：当日新增用户的数量
          */
-        //获得当天的开始时间
-        LocalDateTime begin = LocalDateTime.now().with(LocalTime.MIN);
-        //获得当天的结束时间
-        LocalDateTime end = LocalDateTime.now().with(LocalTime.MAX);
+
         Map map = new HashMap();
         map.put("begin",begin);
         map.put("end",end);

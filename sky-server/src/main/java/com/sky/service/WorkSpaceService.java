@@ -5,8 +5,10 @@ import com.sky.vo.DishOverViewVO;
 import com.sky.vo.OrderOverViewVO;
 import com.sky.vo.SetmealOverViewVO;
 
+import java.time.LocalDateTime;
+
 public interface WorkSpaceService {
-    BusinessDataVO getBusibess();
+    BusinessDataVO getBusibess(LocalDateTime begin,LocalDateTime end);
 
     OrderOverViewVO getOrderOverView();
 
