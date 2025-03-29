@@ -1,2 +1,2 @@
-# sky-take-out
-苍穹外卖
+# Canteen takeout
+食堂外卖
